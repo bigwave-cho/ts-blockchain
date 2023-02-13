@@ -1,25 +1,41 @@
-/*
-TS는 명시적(Explicit) 정의와 타입(Implicit)추론 방식
-모두 사용 가능하여 유연함.
-*/
+const playerA: {
+  name: string;
+  age?: number;
+} = {
+  name: 'ee',
+  age: 12,
+}; //이렇게 객체 만들 때마다 일일이 타입 지정은 비효율적.
 
-let explict = 1;
-let implicit: number = 1;
-implicit = 'string';
-//Type 'string' is not assignable to type 'number'.
+// Type Alias(타입 별칭 : 타입을 미리 만들어두고 별칭을 붙여두는 것.)
+type Age = number;
+type name = string;
 
-let numArr = [1, 2, 3];
-numArr.push('1');
-//Argument of type 'string' is not assignable to parameter of type 'number'.
-// 배열 또한 타입추론 방식으로 타입이 결정될 수 있다.
-
-//아무것도 배열에 없을 때는 명시적 정의가 필요
-let numArr2: number[] = [];
-
-let numArr3 = []; // type:any[]
-
-const player = {
-  name: 'name',
+type Player = {
+  name: name;
+  age?: Age; // 객체 옵셔널 프로퍼티
 };
-player.name = 1; ///error
-player.hello(); //error
+
+const player: Player = {
+  name: 'hh',
+  age: 2,
+};
+
+// function 타입
+function playerMaker(name: string) {
+  return {
+    name: name,
+  };
+}
+
+const nico = playerMaker('pp');
+nico.age = 12; // error: 'age' does not exist on type '{name:string}'
+
+//해결방법 : 반환값 타입 지정.
+function playerMaker2(name: string): Player {
+  return {
+    name: name,
+  };
+}
+
+const nico2 = playerMaker2('pp');
+nico2.age = 12;
