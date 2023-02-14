@@ -1,42 +1,42 @@
-// ## readonly
-type Age = number;
-type Name = string;
+// ## unknown
+// 내가 무슨 타입을 받을 지 모를 때
+let a: unknown;
+let b = a + 1; // error: unknown + number에는 + 사용 불가
 
-type Player = {
-  readonly name: Name; // 수정 불가 읽기만 가능
-  age?: Age;
-};
+//해결 : a의 타입을 한정해주면 됨.
+if (typeof a === 'number') {
+  let b = a + 1;
+}
 
-const player: Player = {
-  name: 'hh',
-  age: 2,
-};
+if (typeof a === 'string') {
+  let b = a.toUpperCase();
+}
 
-const playerMaker = (name: string): Player => ({ name });
-const nico = playerMaker('pp');
-nico.age = 12;
-nico.name = 'w'; //error
+// ## void : 아무것도 반환하지 않는 함수
+function hello() {
+  //:void
+  console.log('x');
+}
 
-const numbers: readonly number[] = [1, 2, 3, 4];
-number.push(1); //error
+// ## never
+// never return / function이 예외를 발생시키는 경우(에러발생)
+function hi(): never {
+  return 'x'; //error
+}
 
-//## Tuple :베열의 인덱스에 타입 지정
-// 요소 3개 각 요소 타입지정됨.
-const person: [string, number, boolean] = ['name', 12, false];
+// 상황 1 : 에러를 던지는 함수인 경우!
+function error(): never {
+  throw new Error('xxx'); //good
+}
 
-person[0] = 1; //error
-
-//readonly 지정도 가능
-const person2: readonly [string, number, boolean] = ['name', 12, false];
-person2[0] = 'ss'; //error
-
-type Option = {
-  name?: string; // ? -> string | undefined 타입
-};
-
-//## any
-//TS 보호를 받고 싶지 않을 때 사용하는 타입(필요할 때만 쓰기)
-
-let a: any[] = [1, 2, 3, 4];
-let b: any = true;
-a + b; //TS 에러 뜨지 않음.
+//상황 2:  never은 타입이 두가지인 상황에서 발생할수도 있음.
+// 절대 나올 수 없는 경우인 경우 never이 붙음.
+function example(name: string | number) {
+  if (typeof name === 'string') {
+    // name type string
+  } else if (typeof name === 'number') {
+    // name type number
+  } else {
+    name; // type never
+  }
+}
