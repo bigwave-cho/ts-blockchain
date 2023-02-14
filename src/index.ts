@@ -1,18 +1,10 @@
-const playerA: {
-  name: string;
-  age?: number;
-} = {
-  name: 'ee',
-  age: 12,
-}; //이렇게 객체 만들 때마다 일일이 타입 지정은 비효율적.
-
-// Type Alias(타입 별칭 : 타입을 미리 만들어두고 별칭을 붙여두는 것.)
+// ## readonly
 type Age = number;
-type name = string;
+type Name = string;
 
 type Player = {
-  name: name;
-  age?: Age; // 객체 옵셔널 프로퍼티
+  readonly name: Name; // 수정 불가 읽기만 가능
+  age?: Age;
 };
 
 const player: Player = {
@@ -20,22 +12,31 @@ const player: Player = {
   age: 2,
 };
 
-// function 타입
-function playerMaker(name: string) {
-  return {
-    name: name,
-  };
-}
-
+const playerMaker = (name: string): Player => ({ name });
 const nico = playerMaker('pp');
-nico.age = 12; // error: 'age' does not exist on type '{name:string}'
+nico.age = 12;
+nico.name = 'w'; //error
 
-//해결방법 : 반환값 타입 지정.
-function playerMaker2(name: string): Player {
-  return {
-    name: name,
-  };
-}
+const numbers: readonly number[] = [1, 2, 3, 4];
+number.push(1); //error
 
-const nico2 = playerMaker2('pp');
-nico2.age = 12;
+//## Tuple :베열의 인덱스에 타입 지정
+// 요소 3개 각 요소 타입지정됨.
+const person: [string, number, boolean] = ['name', 12, false];
+
+person[0] = 1; //error
+
+//readonly 지정도 가능
+const person2: readonly [string, number, boolean] = ['name', 12, false];
+person2[0] = 'ss'; //error
+
+type Option = {
+  name?: string; // ? -> string | undefined 타입
+};
+
+//## any
+//TS 보호를 받고 싶지 않을 때 사용하는 타입
+
+let a: any[] = [1, 2, 3, 4];
+let b: any = true;
+a + b; //TS 에러 뜨지 않음.
