@@ -1,57 +1,50 @@
-// ## Call Signature
-// call signature은 마우스 hover하면 보이는 타입을 의미.
-//const add: (a: number, b: number) => number
-// const add = (a: number, b: number) => a + b;
+// ## polymorphism
 
-// 함수의 call signature 만들기
-// type Add = (a: number, b: number) => number;
-// const add2: Add = (a, b) => a + b;
-
-// ## Overloading
-//외부 라이브러리나 패키지에서 오버로딩을 많이 사용함
-// 오버로딩은 함수가 여러개의 call signature을 가질 때 사용
-
-type Add = {
-  (a: number, b: number): number;
-  (a: number, b: string): number;
+type SuperPrint = {
+  (arr: number[]): void;
+  (arr: boolean[]): void;
+  (arr: string[]): void;
 };
 
-const add: Add = (a, b) => {
-  if (typeof b === 'string') return a;
-  return a + b;
+const superPrint: SuperPrint = (arr) => {
+  arr.forEach((i) => console.log(i));
 };
 
-//위 예제 자세히 설명
-type Config = {
-  path: string;
-  state: object;
+superPrint([1, 2, 3]);
+superPrint([true, false, true]);
+superPrint(['a', 'b']);
+
+// 이렇게 하나 하나 다 짜주는 것은 비효율적.
+// 폴리몰피즘하게 해결해보자
+// concrete type: number, string, boolean...  <-> generic type
+
+superPrint([1, 2, true, 'ss']); //error
+// 해당하는 call signature가 없어 error
+
+// 제네릭타입은 placeholder
+// concrete type이 지정될 예정이지만 아직은 그 타입을 모를 때 사용
+// TS가 알아서 타입을 유추하여 concrete type을 지정해줌
+
+type SuperPrint2 = {
+  <TypePlaceholder>(arr: TypePlaceholder[]): void;
+  // 보통 T, V를 많이 씀
 };
 
-type Push = {
-  (path: string): void;
-  (config: Config): void;
+const superPrint2: SuperPrint2 = (arr) => {
+  arr.forEach((i) => console.log(i));
+};
+superPrint2([1, true, 'ss']);
+//const superPrint2: <string | number | boolean>(arr: (string | number | boolean)[]) => void
+
+// 리턴값에도 적용
+type SuperPrint3 = {
+  <TypePlaceholder>(arr: TypePlaceholder[]): TypePlaceholder;
+  // 보통 T, V를 많이 씀
 };
 
-const push: Push = (config) => {
-  if (typeof config === 'string') {
-    console.log(config);
-  } else {
-    console.log(config.path, config.state);
-  }
+const superPrint3: SuperPrint3 = (arr) => {
+  return arr[0];
 };
 
-// 만약 argument 개수가 다른 경우는?
-
-type Dif = {
-  (a: number, b: number): number;
-  (a: number, b: number, c: number): number;
-};
-
-//마지막 c 파라미터를 옵셔널 지정해주면 에러 해결
-const dif: Dif = (a, b, c?: number) => {
-  if (c) return a + b + c;
-  return a + b;
-};
-
-console.log(dif(1, 2)); //3
-console.log(dif(1, 2, 3)); //6
+superPrint3([1, true, 'ss']);
+//const superPrint3: <string | number | boolean>(arr: (string | number | boolean)[]) => string | number | boolean
