@@ -1,42 +1,67 @@
-// ## unknown
-// 내가 무슨 타입을 받을 지 모를 때
-let a: unknown;
-let b = a + 1; // error: unknown + number에는 + 사용 불가
+// ## Call Signature
+// call signature은 마우스 hover하면 보이는 타입을 의미.
+//const add: (a: number, b: number) => number
+// const add = (a: number, b: number) => a + b;
 
-//해결 : a의 타입을 한정해주면 됨.
-if (typeof a === 'number') {
-  let b = a + 1;
-}
+// 함수의 call signature 만들기
+// type Add = (a: number, b: number) => number;
+// const add2: Add = (a, b) => a + b;
 
-if (typeof a === 'string') {
-  let b = a.toUpperCase();
-}
+// ## Overloading
+//외부 라이브러리나 패키지에서 오버로딩을 많이 사용함
+// 오버로딩은 함수가 여러개의 call signature을 가질 때 사용
 
-// ## void : 아무것도 반환하지 않는 함수
-function hello() {
-  //:void
-  console.log('x');
-}
+type Add = {
+  (a: number, b: number): number;
+  (a: number, b: string): number;
+};
 
-// ## never
-// never return / function이 예외를 발생시키는 경우(에러발생)
-function hi(): never {
-  return 'x'; //error
-}
+const add: Add = (a, b) => {
+  if (typeof b === 'string') return a;
+  return a + b;
+};
 
-// 상황 1 : 에러를 던지는 함수인 경우!
-function error(): never {
-  throw new Error('xxx'); //good
-}
+// overloading 실 사용 예(Nextjs)
 
-//상황 2:  never은 타입이 두가지인 상황에서 발생할수도 있음.
-// 절대 나올 수 없는 경우인 경우 never이 붙음.
-function example(name: string | number) {
-  if (typeof name === 'string') {
-    // name type string
-  } else if (typeof name === 'number') {
-    // name type number
+// Router.push할 때 객체를 보낼 수도
+Router.push({
+  path: '/home',
+  state: 1,
+});
+// string을 보낼 수도 있음.
+Router.push('/home');
+
+//위 예제 자세히 설명
+type Config = {
+  path: string;
+  state: object;
+};
+
+type Push = {
+  (path: string): void;
+  (config: Config): void;
+};
+
+const push: Push = (config) => {
+  if (typeof config === 'string') {
+    console.log(config);
   } else {
-    name; // type never
+    console.log(config.path, config.state);
   }
-}
+};
+
+// 만약 argument 개수가 다른 경우는?
+
+type Dif = {
+  (a: number, b: number): number;
+  (a: number, b: number, c: number): number;
+};
+
+//마지막 c 파라미터를 옵셔널 지정해주면 에러 해결
+const dif: Dif = (a, b, c?: number) => {
+  if (c) return a + b + c;
+  return a + b;
+};
+
+console.log(dif(1, 2)); //3
+console.log(dif(1, 2, 3)); //6
