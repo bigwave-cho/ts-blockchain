@@ -21,16 +21,6 @@ const add: Add = (a, b) => {
   return a + b;
 };
 
-// overloading 실 사용 예(Nextjs)
-
-// Router.push할 때 객체를 보낼 수도
-Router.push({
-  path: '/home',
-  state: 1,
-});
-// string을 보낼 수도 있음.
-Router.push('/home');
-
 //위 예제 자세히 설명
 type Config = {
   path: string;

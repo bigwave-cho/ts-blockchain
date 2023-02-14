@@ -2,6 +2,11 @@
   "include": ["src"],
   "compilerOptions": {
     "outDir": "build",
-    "target": "ES3"
+    "target": "ES3",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
   }
 }
