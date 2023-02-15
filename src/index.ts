@@ -1,77 +1,60 @@
-//## Class
+//# hash map
 
-/*
-선언한 클래스 내/ 상속받은 클래스 내 / 인스턴스
-
-private   : O  /  X  /  X 
-protected : O  /  O   /  X
-public    : O  /  O   /  O
-
-JS는 private 등을 지원하지 않는다.
-고로 JS에서 아래 코드는 잘 작동한다.
-하지만 TS는 사전에 에러를 띄워 작동을 막음.
-*/
-
-//## private, public
-class Player {
-  constructor(
-    private firstName: string,
-    private lastName: string,
-    public nickName: string
-  ) {}
+class Dit {
+  //기존 property 생성 방식
+  constructor(private x: string, protected y: string) {}
 }
 
-const nano = new Player('nano', 'las', '나');
-nano.firstName; // error
-nano.nickName; // public은 접근 가능.
+// dictionary 만들기
 
-//## abstract class
-// 추상 클래스는 다른 클래스가 상속받을 수 있는 클래스
-// 단, 직접 새로운 인스턴스를 생성 불가.
-abstract class User {
-  constructor(
-    private firstName: string,
-    private lastName: string,
-    public nickName: string
-  ) {}
-  getFullName() {
-    return `${this.firstName} ${this.lastName}`;
-  } //당연히 메서드도 private 지정 가능.
-}
-// new User // error
+type Words = {
+  // property의 이름은 모르지만 타입만을 알 때 사용
+  [key: string]: string;
+};
 
-class Son extends User {}
+class Dict {
+  private words: Words;
+  // constructor로 수동 초기화
+  constructor() {
+    this.words = {};
+  }
 
-const son = new Son('son', 'son', 'sony');
-son.nickName; //sony
-son.firstName; //error private
-son.getFullName(); //이건 가능
-
-//-----------------## abstract method
-//abstract class 내에서 abstract method를 만들  수 있다.
-//abstract method는 implement하면 안되고(implement:구현 ; 위 User의 getFullName 형태)
-//대신 메소드의 call signature만을 적어둬야 한다.
-abstract class User2 {
-  constructor(
-    protected firstName: string,
-    private lastName: string,
-    private nickName: string
-  ) {}
-  abstract getNickName(): void;
-}
-// 추상 메서드란 추상 클래스를 상속받는 모든 클래스들이
-//구현해야하는 메서드를 의미한다.
-class Player2 extends User2 {
-  //Non-abstract class 'Player2' does not implement inherited abstract member 'getNickName' from class 'User2'.
-  //추상 메서드를 구현하라는 위 에러 해결하기
-  getNickName() {
-    console.log(this.nickName); //error
-    // nickName은 private이기 때문에 자식 class에서도 접근 불가
-    console.log(this.firstName);
-    //protected는 선언클래스와 자식클래스까지 접근가능하지만
-    // 외부에서는 접근 불가.
+  // class를 타입으로도 사용 가능
+  // 파라미터가 해당 클래스의 인스턴스
+  add(word: Word) {
+    if (this.words[word.term] === undefined) {
+      this.words[word.term] = word.def;
+    }
+  }
+  def(term: string) {
+    return this.words[term];
+  }
+  modify(word: Word) {
+    this.words[word.term] = word.def;
+  }
+  delete(term: string) {
+    if (this.words[term]) {
+      delete this.words[term];
+    }
   }
 }
 
-const son2 = new Player2('son', 'son', 'sony');
-son2.firstName; //protected 외부 접근 불가
+class Word {
+  constructor(public term: string, public def: string) {}
+}
+
+const kimchi = new Word('kimchi', '한국 음식');
+const dict = new Dict();
+
+dict.add(kimchi);
+dict.def('kimchi'); // '한국 음식'
+dict.modify({ term: 'kimchi', def: '매워용' });
+dict.def('kimchi'); // 매워용
+dict.delete('kimchi');
+dict.def('kimchi'); // undefined
+
+// 중요 포인트
+/*
+1. 프로퍼티를 만들고 원하는 대로 초기화하기
+2. 클래스도 타입으로 사용 가능하다.
+*/
