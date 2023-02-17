@@ -1,66 +1,48 @@
-// RECAP
+//# API 디자인 구현해보기.
 
-type Alias = string;
-
-type Concrete = '1' | '2';
-
-//Type
-type PlayerA = {
-  name: string;
-};
-
-//extends
-type PlayerAA = PlayerA & {
-  lastName: string;
-};
-
-//프로퍼티 추가?
-type PlayerAA = {
-  //error
-  age: number;
-};
-
-const playerA: PlayerAA = {
-  name: 'nini',
-  lastName: 'lee',
-};
-
-//Interface
-interface PlayerB {
-  name: string;
+interface Storage {
+  //Storage는 TS에 의해서 이미 선언된 JS 웹스토리지 API를 위한 인터페이스
+  // 이렇게 하면 중첩!! 프로퍼티가 추가됨
 }
-//extends
-interface PlayerBB extends PlayerB {
-  lastName: string;
-}
-//프로퍼티 추가
-interface PlayerBB {
-  age: number;
-}
-const playerB: PlayerBB = {
-  name: 'nini',
-  lastName: 'lee',
-  age: 1,
-};
-
-// Type과 Interface 모두 추상 클래스를 대신해서 사용 가능.
-
-type PlayerC = {
-  firstName: string;
-};
-interface PlayerD {
-  firstName: string;
+// 이번엔 그냥 고유 Storage 인터페이스로 진행
+interface SStorage<T> {
+  [key: string]: T;
 }
 
-// implements PlayerD 도 가능.
-class User implements PlayerC {
-  constructor(public firstName: string) {}
+class LocalStorage<T> {
+  // 클래스에 제너릭을 부여했음
+  // 이 제너릭을 아래처럼 스토리지로 보내줄 수 있음.
+  private storage: SStorage<T> = {};
+  set(key: string, value: T) {
+    // 스토리지에 저장
+    if (this.storage[key] !== undefined) {
+      console.log('이미 존재');
+      return;
+    }
+    this.storage[key] = value;
+    console.log(this.storage[key]);
+  }
+  remove(key: string) {
+    //스토리지에서 삭제
+    delete this.storage[key];
+  }
+  get(key: string): T {
+    //데이터 겟
+    return this.storage[key];
+  }
+  clear() {
+    //스토리지 비우기
+    this.storage = {};
+  }
 }
 
-/*
-오브젝트나 클래스의 타입을 정할 때는 interface를.
-다른 경우에는 type을 사용하자.
+const stringsStorage = new LocalStorage<string>();
+stringsStorage.set('g', 'g');
+stringsStorage.set('g', 'g');
+stringsStorage.get('g');
+//get(key: string): string :스트링을 보내고 스트링을 반환받게 됨.
 
-타입과 인터페이스 차이 공식 문서.
-https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces:~:text=typed%20type%20system.-,Differences%20Between%20Type%20Aliases%20and%20Interfaces,-Type%20aliases%20and
-*/
+const booleanStorage = new LocalStorage<boolean>();
+booleanStorage.set('hello', true);
+booleanStorage.get('g');
+//LocalStorage<boolean>.get(key: string): boolean
