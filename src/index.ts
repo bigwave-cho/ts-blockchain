@@ -1,94 +1,66 @@
-//# abstract class 복습
-// 추상 클래스는 상속받는 class 가질 property와 메서드를 지정 가능.
-// 청사진!
-abstract class User {
-  constructor(protected firstName: string, protected lastName: string) {}
-  // protected: 상속받는 class에서 접근 가능
-  // private : 상속받는 class에서 접근 불가
-  abstract sayHi(name: string): string;
-  abstract fullName(): string;
-}
+// RECAP
 
-// abstract 클래스는 인스턴스 만들기 불가.
-const user = new User(); //error
+type Alias = string;
 
-class Player extends User {
-  fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
-  sayHi(name: string): string {
-    return `Hello ${name}, my name is ${this.fullName}`;
-  }
-}
+type Concrete = '1' | '2';
 
-// 추상 클래스의 단점은 JS에서는 추상 클래스란 개념이 없음.
-//JS로 컴파일하면 abstract가 무의미해짐.
+//Type
+type PlayerA = {
+  name: string;
+};
 
-// ## 추상 클래스를 interface로 !!
-// interface는 JS로 컴파일되지 않아 JS로 변환된 결과가 훨씬 작아지는 장점이 있음.(코드길이)
-interface User2 {
-  firstName: string;
+//extends
+type PlayerAA = PlayerA & {
   lastName: string;
-  sayHi(name: string): string;
-  fullName(): string;
+};
+
+//프로퍼티 추가?
+type PlayerAA = {
+  //error
+  age: number;
+};
+
+const playerA: PlayerAA = {
+  name: 'nini',
+  lastName: 'lee',
+};
+
+//Interface
+interface PlayerB {
+  name: string;
+}
+//extends
+interface PlayerBB extends PlayerB {
+  lastName: string;
+}
+//프로퍼티 추가
+interface PlayerBB {
+  age: number;
+}
+const playerB: PlayerBB = {
+  name: 'nini',
+  lastName: 'lee',
+  age: 1,
+};
+
+// Type과 Interface 모두 추상 클래스를 대신해서 사용 가능.
+
+type PlayerC = {
+  firstName: string;
+};
+interface PlayerD {
+  firstName: string;
 }
 
-// optional : interface 중첩 상속도 가능.
-interface Human {
-  health: number;
+// implements PlayerD 도 가능.
+class User implements PlayerC {
+  constructor(public firstName: string) {}
 }
 
-// implements를 이용하여 interface를 상속받고 그 결과
-// 변환된 JS에 class는 존재하지만 상속하는 interface는 존재하지 않기에
-// 코드가 더 가벼워진다.
-class Player2 implements User2, Human {
-  //단점 : interface implement는 프로퍼티를 private or protected 불가.
-  constructor(
-    public firstName: string,
-    public lastName: string,
-    public health: number
-  ) {}
-  sayHi(name: string): string {
-    return 'lee';
-  }
-  fullName(): string {
-    return 'ee';
-  }
-}
+/*
+오브젝트나 클래스의 타입을 정할 때는 interface를.
+다른 경우에는 type을 사용하자.
 
-/**
- 결론 
- interface는 object나 class의 모양을 특정한다.
- */
-
-// 인터페이스나 class는 타입으로도 지정 가능.
-function makeUser(user: User2): User2 {
-  return {
-    firstName: 'ww',
-    lastName: 'fsadf',
-    fullName: () => 'string',
-    sayHi: (name) => 'string',
-  };
-}
-
-makeUser({
-  firstName: 'ww',
-  lastName: 'fsadf',
-  fullName: () => 'string',
-  sayHi: (name) => 'string',
-});
-
-//다만 class를 반환 타입으로 지정하게되면
-// interface의 경우 객체로 반환하면 되지만.
-function makeUser2(user: Player2): Player2 {
-  return new Player2('이름', '성', 10);
-  //class는 이런 식으로 class의 인스턴스로 반환해야 함.
-}
-
-makeUser2({
-  firstName: 'ww',
-  lastName: 'fsadf',
-  fullName: () => 'string',
-  sayHi: (name) => 'string',
-  health: 10,
-});
+타입과 인터페이스 차이 공식 문서.
+https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces:~:text=typed%20type%20system.-,Differences%20Between%20Type%20Aliases%20and%20Interfaces,-Type%20aliases%20and
+*/
