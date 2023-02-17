@@ -1,102 +1,90 @@
-type Words = {
-  [key: string]: string;
+// # Interface
+
+// 기존 타입에 대한 설명
+type Nickname = string;
+type healthBar = number;
+type Friends = Array<string>;
+type Player = {
+  nickname: Nickname;
+  healthBar: healthBar;
 };
 
-class Dict {
-  private words: Words;
-  constructor() {
-    this.words = {};
-  }
+const nico: Player = {
+  nickname: 'nico',
+  healthBar: 10,
+};
 
-  add(word: Word) {
-    if (this.words[word.term] === undefined) {
-      this.words[word.term] = word.def;
-    }
-  }
-  get(term: string) {
-    return this.words[term];
-  }
-  undate(word: Word) {
-    this.words[word.term] = word.def;
-  }
-  delete(term: string) {
-    if (this.words[term]) {
-      delete this.words[term];
-    }
-  }
-  showAll() {
-    let list = [];
-    for (var term in this.words) {
-      list.push(term);
-    }
-    return list;
-  }
-  count() {
-    let list = [];
-    for (var term in this.words) {
-      list.push(term);
-    }
-    return list.length;
-  }
+type Food = string;
+const kimchi: Food = 'delicious';
 
-  upsert(word: Word) {
-    this.words[word.term] = word.def;
-  }
-  exists(term: string) {
-    return this.words[term] ? '존재' : '없음';
-  }
-  bulkAdd(words: Word[]) {
-    words.forEach((word) => {
-      this.words[word.term] = word.def;
-    });
-  }
-  bulkDelete(words: Word[]) {
-    words.forEach((word) => {
-      delete this.words[word.term];
-    });
-    console.log('삭제완료');
-  }
+// 타입을 지정된 옵션으로 제한
+type Team = 'red' | 'blue' | 'yellow';
+type HealthBar = 1 | 5 | 10;
+type Player2 = {
+  nickname: string;
+  team: Team;
+  //type Team = "red" | "blue" | "yellow"
+  health: HealthBar;
+};
 
-  static hello() {
-    console.log('hello');
-  }
+const player: Player2 = {
+  nickname: 'hhh',
+  team: 'blue',
+  health: 1,
+};
+
+//## Interface!
+// object의 구성을 특정해줌.(1. type(다양한 곳에 사용) 2. interface(객체에 한정))
+interface Player3 {
+  nickname: string;
+  team: Team;
+  health: HealthBar;
 }
 
-class Word {
-  //만약 private이나 protected가 아닌 public을 수정불가로 만드려면
-  // TS의 readonly를 추가하면 된다.
-  constructor(public readonly term: string, public readonly def: string) {}
+const player2: Player3 = {
+  nickname: 'hhh',
+  team: 'blue',
+  health: 1,
+};
+
+//----
+interface User {
+  name: string;
 }
-
-const kimchi = new Word('kimchi', '한국 음식');
-const bibimbob = new Word('bibimbob', '비벼먹는 음식');
-const dict = new Dict();
-
-// kimchi.def = '123123';
-//Cannot assign to 'def' because it is a read-only property.
-
-Dict.hello();
+interface Player4 extends User {
+  readonly num: number;
+  // readonly도 가능.
+}
 
 /*
-정적 메서드
-정적 메서드는 클래스의 인스턴스 없이 호출이 가능하며 클래스가 인스턴스화되면 호출할 수 없다. 정적 메서드는 종종 어플리케이션의 유틸리티 함수를 만드는데 사용된다.
+type으로 extends를 구현하려면?
+type User = {
+  name:string
+}
+type Player4 = User & {
+  num:number
+}
 */
-class Triple {
-  static triple(n?: number) {
-    n = n || 1; //비트연산이 아니어야 합니다.
-    return n * 3;
-  }
-}
 
-class BiggerTriple extends Triple {
-  static triple(n: number) {
-    return super.triple(n) * super.triple(n);
-  }
-}
+const nn: Player4 = {
+  name: 'sdf',
+  num: 2,
+};
 
-console.log(Triple.triple()); // 3
-console.log(Triple.triple(6)); // 18
-console.log(BiggerTriple.triple(3)); // 81
-var tp = new Triple();
-console.log(BiggerTriple.triple(3)); // 81 (부모의 인스턴스에 영향을 받지 않습니다.)
-console.log(tp.triple()); // 'tp.triple은 함수가 아닙니다.'.
+nn.num = 1; //error
+
+// interface 축적  (type은 불가.)
+interface accu {
+  name: string;
+}
+interface accu {
+  lastName: string;
+}
+interface accu {
+  age: number;
+}
+const pp: accu = {
+  name: '123',
+  lastName: '132',
+  age: 123,
+};
