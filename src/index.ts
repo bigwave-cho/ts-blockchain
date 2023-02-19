@@ -1,20 +1,30 @@
-//# API 디자인 구현해보기.
+//# 1. LocalStorage 기능 구현해보기
 
-interface Storage {
-  //Storage는 TS에 의해서 이미 선언된 JS 웹스토리지 API를 위한 인터페이스
-  // 이렇게 하면 중첩!! 프로퍼티가 추가됨
-}
-// 이번엔 그냥 고유 Storage 인터페이스로 진행
 interface SStorage<T> {
   [key: string]: T;
 }
 
-class LocalStorage<T> {
-  // 클래스에 제너릭을 부여했음
-  // 이 제너릭을 아래처럼 스토리지로 보내줄 수 있음.
-  private storage: SStorage<T> = {};
-  set(key: string, value: T) {
-    // 스토리지에 저장
+abstract class LocalStorage<T> {
+  protected storage: SStorage<T> = {};
+  constructor() {
+    this.storage = {};
+  }
+  abstract length(): number;
+  abstract setItem(key: string, value: T): void;
+  abstract getItem(key: string): T;
+  abstract clearItem(key: string): void;
+  abstract clear(): void;
+}
+
+class StringStorage extends LocalStorage<string> {
+  constructor() {
+    super();
+  }
+
+  length(): number {
+    return Object.keys(this.storage).length;
+  }
+  setItem(key: string, value: string) {
     if (this.storage[key] !== undefined) {
       console.log('이미 존재');
       return;
@@ -22,27 +32,97 @@ class LocalStorage<T> {
     this.storage[key] = value;
     console.log(this.storage[key]);
   }
-  remove(key: string) {
-    //스토리지에서 삭제
-    delete this.storage[key];
+
+  getItem(key: string): string {
+    if (this.storage[key]) {
+      return this.storage[key];
+    } else {
+      return `${key}라는 단어가 없어유`;
+    }
   }
-  get(key: string): T {
-    //데이터 겟
-    return this.storage[key];
+
+  clearItem(key: string) {
+    if (this.storage[key]) {
+      delete this.storage[key];
+      console.log(`${key} 삭제완료`);
+    } else {
+      console.log(`${key}가 없는디요?`);
+    }
   }
   clear() {
-    //스토리지 비우기
     this.storage = {};
+    console.log('비웠수다');
   }
 }
 
-const stringsStorage = new LocalStorage<string>();
-stringsStorage.set('g', 'g');
-stringsStorage.set('g', 'g');
-stringsStorage.get('g');
-//get(key: string): string :스트링을 보내고 스트링을 반환받게 됨.
+const stringsStorage = new StringStorage();
+stringsStorage.setItem('스토리지', '로컬');
+stringsStorage.setItem('로컬', '스토리지');
+stringsStorage.getItem('로컬');
+stringsStorage.clearItem('로컬');
+stringsStorage.clear();
 
-const booleanStorage = new LocalStorage<boolean>();
-booleanStorage.set('hello', true);
-booleanStorage.get('g');
-//LocalStorage<boolean>.get(key: string): boolean
+// # 2. Geolocation API
+// geolocation.getCurrentPosition(successFn, errorFn, optionsObj);
+type GeolocationCoords = {
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  accuracy: number;
+  altitudeAccuracy: number;
+  heading: number;
+  speed: number;
+};
+
+type Position = {
+  coords: GeolocationCoords;
+};
+
+type GeoError = {
+  code: number;
+  message: string;
+};
+
+type SuccessFn = (position: Position) => void;
+type ErrorFn = (error: GeoError) => void;
+
+interface GeoOptions {
+  maximumAge: number;
+  timeout: number;
+  enableHighAcuuracy: boolean;
+}
+type GetCurrentPosition = {
+  (suceessFn: SuccessFn): void;
+  (suceessFn: SuccessFn, errorFn: ErrorFn): void;
+  (suceessFn: SuccessFn, errorFn: ErrorFn, optionsObj: GeoOptions): void;
+};
+
+type WatchPosition = {
+  (suceessFn: SuccessFn): number;
+  (suceessFn: SuccessFn, errorFn?: ErrorFn): number;
+  (suceessFn: SuccessFn, errorFn?: ErrorFn, optionsObj?: GeoOptions): number;
+};
+
+interface GeolocationAPI {
+  getCurrentPosition: GetCurrentPosition;
+  watchPosition: WatchPosition;
+  clearWatch: (id: number) => void;
+}
+
+class Geolocator implements GeolocationAPI {
+  getCurrentPosition: GetCurrentPosition = (
+    success: SuccessFn,
+    error?: ErrorFn,
+    options?: GeoOptions
+  ) => {
+    return; // Implementation goes here :)
+  };
+  watchPosition: WatchPosition = (
+    success: SuccessFn,
+    error?: ErrorFn,
+    options?: GeoOptions
+  ) => {
+    return 1; // Implementation goes here :)
+  };
+  clearWatch = (id: number) => {};
+}
