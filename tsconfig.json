@@ -11,15 +11,15 @@
     // 컴파일된 JS코드는 var나 일반함수 결과! 또는 클래스가 생성자함수로 다운 컴파일
     // 대부분 브라우저와 노드는 ES6지원하니 ES6추천
     "module": "commonjs",
-    "lib": ["ES6", "DOM"],
+    "lib": ["ES6"],
     // JS가 어떤 환경에서 동작할지, 무슨 API를 쓸지 알려줘서 자동완서 가능하게 됨.
     // DOM : browser환경 / ES6 지원하는 서버
     //index.ts에서 document. 해보면 TS가 무엇인지 알고 모든 이벤트와 메서드 보여줌.
     // DOM을 예로들면 node_modules/typescript/lib/lib.dom.d.ts 란 파일에 TS에게 알려줄 타입들이 정의되어있음.
     "strict": true,
     //엄격모드
-    "allowJs": true
-    //레거시 js코드 등을 이유로 TS프로젝트에 js도 쓰고 싶을 때 이런식으로
-    //플젝 내에 js파일 허용해주는 옵션
+
+    "esModuleInterop": true
+    //CommonJS 모듈을 ES6 모듈 코드베이스로 가져오려고 할 때 발생하는 문제를 해결합니다. ES6 모듈 사양을 준수하여 CommonJS 모듈을 정상적으로 가져올 수 있게 해줍니다.
   }
 }
