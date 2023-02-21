@@ -16,7 +16,10 @@
     // DOM : browser환경 / ES6 지원하는 서버
     //index.ts에서 document. 해보면 TS가 무엇인지 알고 모든 이벤트와 메서드 보여줌.
     // DOM을 예로들면 node_modules/typescript/lib/lib.dom.d.ts 란 파일에 TS에게 알려줄 타입들이 정의되어있음.
-    "strict": true
+    "strict": true,
     //엄격모드
+    "allowJs": true
+    //레거시 js코드 등을 이유로 TS프로젝트에 js도 쓰고 싶을 때 이런식으로
+    //플젝 내에 js파일 허용해주는 옵션
   }
 }
